@@ -1,0 +1,4 @@
+/home/manar/IOT_SHADOW_AGENT/server/build/CMakeFiles/generate_protos.dir
+/home/manar/IOT_SHADOW_AGENT/server/build/CMakeFiles/iotshadow_server.dir
+/home/manar/IOT_SHADOW_AGENT/server/build/CMakeFiles/edit_cache.dir
+/home/manar/IOT_SHADOW_AGENT/server/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,14 @@
+{
+  "cpu": {
+    "warning": 80,
+    "critical": 95
+  },
+  "memory": {
+    "warning": 85,
+    "critical": 95
+  },
+  "disk": {
+    "warning": 85,
+    "critical": 95
+  }
+}

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package ota;
+
+service OTAUpdateService {
+    rpc CheckForUpdates(CheckUpdatesRequest) returns (CheckUpdatesResponse);
+    rpc DownloadUpdate(DownloadRequest) returns (stream DownloadResponse);
+    rpc ReportStatus(StatusReport) returns (StatusResponse);
+}
+
+message CheckUpdatesRequest {
+    int32 device_id = 1;
+    string app_name = 2;       // e.g. "my_app"
+    string current_version = 3; 
+}
+
+message UpdateInfo {
+    string app_name = 1;
+    string version = 2;
+    string checksum = 3;
+    string target_path = 4;
+}
+
+message CheckUpdatesResponse {
+    repeated UpdateInfo available_updates = 1;
+    bool has_updates = 2;
+}
+
+message DownloadRequest {
+    int32 device_id = 1;
+    string app_name = 2;
+}
+
+message DownloadResponse {
+    bytes data = 1;
+    int64 total_size = 2;
+    int64 current_size = 3;
+}
+
+message StatusReport {
+    int32 device_id = 1;
+    string app_name = 2;
+    string status = 3; // SUCCESS, FAILED, IN_PROGRESS
+    string error_message = 4;
+    string version = 5;
+}
+
+message StatusResponse {
+    bool success = 1;
+    string message = 2;
+}

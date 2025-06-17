@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+ad412eff15b44f0ca709ce78df5fcab0 CMakeFiles/generate_protos
+313f757ad53310650a9e0d3a9e05205c monitoring-service/monitoring.pb.cc
+820e763d591324088a973038433c517d ota-service/ota_service.pb.cc
+461f1d9a541313d94b53ed9daf70b125 provision-service/provisioning.pb.cc
