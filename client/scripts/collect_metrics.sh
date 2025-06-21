@@ -119,7 +119,7 @@ OS_VERSION=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d= -f2- | tr -d '"' || 
 # === Création du fichier JSON pour les métriques matérielles ===
 {
   echo "{"
-  echo "  \"device_id\": \"$(<"$BASE_DIR/config/config.txt")\","
+  echo "  \"device_id\": \"$(head -n 1 "$BASE_DIR/config/config.txt")\","
   echo "  \"readable_date\": \"$READABLE_DATE\","
   echo "  \"cpu_usage\": \"$CPU_USAGE\","
   echo "  \"memory_usage\": \"$MEMORY_USAGE_PERCENT\","
@@ -135,7 +135,7 @@ OS_VERSION=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d= -f2- | tr -d '"' || 
 # === Création du fichier JSON pour les métriques logicielles/réseau ===
 {
   echo "{"
-  echo "  \"device_id\": \"$(<"$BASE_DIR/config/config.txt")\","
+  echo "  \"device_id\": \"$(head -n 1 "$BASE_DIR/config/config.txt")\","
   echo "  \"readable_date\": \"$READABLE_DATE\","
   echo "  \"ip_address\": \"$IP_ADDRESS\","
   echo "  \"uptime\": \"$UPTIME\","

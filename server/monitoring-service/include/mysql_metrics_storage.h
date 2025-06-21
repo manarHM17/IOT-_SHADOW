@@ -17,4 +17,6 @@ public:
 private:
     void* conn_; // Use MYSQL* if you include <mysql/mysql.h>
     std::mutex mysql_mutex_;
+    std::string escapeSqlString(const std::string& input);
+
 };

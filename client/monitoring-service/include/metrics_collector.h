@@ -55,7 +55,9 @@ public:
 private:
     std::string log_dir_;
     std::string device_id_;
-    
+    double parsePercentage(const nlohmann::json& value);
+    std::string parseJsonToString(const nlohmann::json& value);
     nlohmann::json readJsonFile(const std::string& file_path);
     void loadDeviceId();
+
 };

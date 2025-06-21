@@ -11,7 +11,7 @@ class AlertManager {
 public:
     AlertManager();
     
-    enum AlertSeverity {
+    enum class AlertSeverity {
         INFO,
         WARNING,
         CRITICAL

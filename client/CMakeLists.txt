@@ -95,6 +95,7 @@ add_custom_command(
     DEPENDS ${OTA_PROTO}
 )
 
+
 # Create a target for proto generation
 add_custom_target(generate_protos
     DEPENDS
@@ -111,6 +112,7 @@ add_custom_target(generate_protos
         ${GENERATED_PROTO_PATH_OTA}/ota_service.grpc.pb.cc
         ${GENERATED_PROTO_PATH_OTA}/ota_service.grpc.pb.h
 )
+
 
 # List specific source files for each service to avoid multiple mains and duplicate implementations
 set(CLIENT_SOURCES
@@ -129,6 +131,7 @@ set(CLIENT_SOURCES
     ${GENERATED_PROTO_PATH_OTA}/ota_service.pb.cc
     ${GENERATED_PROTO_PATH_OTA}/ota_service.grpc.pb.cc
 )
+
 
 # Create the main client executable
 add_executable(iotshadow_client ${CLIENT_SOURCES})

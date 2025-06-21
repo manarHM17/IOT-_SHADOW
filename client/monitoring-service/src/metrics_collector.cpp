@@ -11,7 +11,7 @@
 namespace fs = std::filesystem;
 
 MetricsCollector::MetricsCollector(const std::string& log_dir) 
-    : log_dir_(log_dir) {
+    : log_dir_(fs::absolute(log_dir)) {
     loadDeviceId();
 }
 
@@ -105,11 +105,14 @@ MetricsCollector::HardwareMetrics MetricsCollector::parseHardwareMetrics(const s
     HardwareMetrics metrics;
     metrics.device_id = device_id_;
     metrics.readable_date = json["readable_date"];
-    metrics.cpu_usage = json["cpu_usage"];
-    metrics.memory_usage = json["memory_usage"];
-    metrics.disk_usage_root = json["disk_usage"];
+    
+    // Parse percentage strings
+    metrics.cpu_usage = parsePercentage(json["cpu_usage"]);
+    metrics.memory_usage = parsePercentage(json["memory_usage"]);
+    metrics.disk_usage_root = parsePercentage(json["disk_usage"]);
+    
     metrics.usb_data = json.contains("usb_state") ? json["usb_state"].get<std::string>() : "none";
-    metrics.gpio_state = json["gpio_state"];
+    metrics.gpio_state = parseJsonToString(json["gpio_state"]);
     metrics.kernel_version = json.value("kernel_version", "");
     metrics.hardware_model = json.value("hardware_model", "");
     metrics.firmware_version = json.value("firmware_version", "");
@@ -140,6 +143,41 @@ MetricsCollector::SoftwareMetrics MetricsCollector::parseSoftwareMetrics(const s
         metrics.services[service] = status;
     }
     return metrics;
+}
+
+// Helper function to parse percentage strings
+double MetricsCollector::parsePercentage(const nlohmann::json& value) {
+    if (value.is_number()) {
+        return value.get<double>();
+    } else if (value.is_string()) {
+        std::string str = value.get<std::string>();
+        // Remove % sign if present
+        if (!str.empty() && str.back() == '%') {
+            str.pop_back();
+        }
+        try {
+            return std::stod(str);
+        } catch (const std::exception& e) {
+            std::cerr << "Warning: Could not parse percentage value: " << str << std::endl;
+            return 0.0;
+        }
+    }
+    std::cerr << "Warning: Unexpected data type for percentage value" << std::endl;
+    return 0.0;
+}
+
+// Helper function to convert JSON value to string
+std::string MetricsCollector::parseJsonToString(const nlohmann::json& value) {
+    if (value.is_string()) {
+        return value.get<std::string>();
+    } else if (value.is_number()) {
+        return std::to_string(value.get<double>());
+    } else if (value.is_boolean()) {
+        return value.get<bool>() ? "true" : "false";
+    } else if (value.is_null()) {
+        return "null";
+    }
+    return "unknown";
 }
 
 nlohmann::json MetricsCollector::readJsonFile(const std::string& file_path) {

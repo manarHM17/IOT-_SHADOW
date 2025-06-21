@@ -60,17 +60,17 @@ bool MySQLMetricsStorage::initDatabase() {
         return false;
     }
 
-    // Création des tables
+    // Création des tables - Updated schema to match data types
     const char* create_hw_table =
         "CREATE TABLE IF NOT EXISTS hardware_info ("
         "id INT AUTO_INCREMENT PRIMARY KEY,"
         "device_id VARCHAR(128),"
         "readable_date VARCHAR(32),"
-        "cpu_usage VARCHAR(16),"
-        "memory_usage VARCHAR(16),"
-        "disk_usage VARCHAR(16),"
+        "cpu_usage DECIMAL(5,2),"  // Changed to DECIMAL for numeric values
+        "memory_usage DECIMAL(5,2),"  // Changed to DECIMAL for numeric values
+        "disk_usage DECIMAL(5,2),"  // Changed to DECIMAL for numeric values
         "usb_state TEXT,"
-        "gpio_state INT,"
+        "gpio_state VARCHAR(32),"  // Changed to VARCHAR to handle string values
         "kernel_version VARCHAR(64),"
         "hardware_model VARCHAR(128),"
         "firmware_version VARCHAR(128),"
@@ -128,6 +128,17 @@ bool MySQLMetricsStorage::executeQuery(const std::string& query) {
     return true;
 }
 
+// Helper function to escape SQL strings
+std::string MySQLMetricsStorage::escapeSqlString(const std::string& input) {
+    if (!conn_) return input;
+    
+    char* escaped = new char[input.length() * 2 + 1];
+    mysql_real_escape_string(static_cast<MYSQL*>(conn_), escaped, input.c_str(), input.length());
+    std::string result(escaped);
+    delete[] escaped;
+    return result;
+}
+
 bool MySQLMetricsStorage::insertHardwareInfo(const nlohmann::json& m) {
     if (!conn_) {
         std::cerr << "No MySQL connection available" << std::endl;
@@ -137,18 +148,51 @@ bool MySQLMetricsStorage::insertHardwareInfo(const nlohmann::json& m) {
     // Log the full JSON for debugging
     std::cout << "Inserting hardware metrics: " << m.dump(2) << std::endl;
     
+    // Handle different data types properly
+    std::string device_id = escapeSqlString(m.value("device_id", "unknown"));
+    std::string readable_date = escapeSqlString(m.value("readable_date", ""));
+    std::string usb_state = escapeSqlString(m.value("usb_state", ""));
+    std::string gpio_state = escapeSqlString(m.value("gpio_state", ""));
+    std::string kernel_version = escapeSqlString(m.value("kernel_version", ""));
+    std::string hardware_model = escapeSqlString(m.value("hardware_model", ""));
+    std::string firmware_version = escapeSqlString(m.value("firmware_version", ""));
+    
+    // Handle numeric values - convert to string for SQL
+    double cpu_usage = 0.0;
+    double memory_usage = 0.0;
+    double disk_usage = 0.0;
+    
+    if (m.contains("cpu_usage")) {
+        if (m["cpu_usage"].is_number()) {
+            cpu_usage = m["cpu_usage"].get<double>();
+        }
+    }
+    
+    if (m.contains("memory_usage")) {
+        if (m["memory_usage"].is_number()) {
+            memory_usage = m["memory_usage"].get<double>();
+        }
+    }
+    
+    if (m.contains("disk_usage")) {
+        if (m["disk_usage"].is_number()) {
+            disk_usage = m["disk_usage"].get<double>();
+        }
+    }
+    
     std::string query =
         "INSERT INTO hardware_info (device_id, readable_date, cpu_usage, memory_usage, disk_usage, usb_state, gpio_state, kernel_version, hardware_model, firmware_version) VALUES ('" +
-        m.value("device_id", "unknown") + "','" +  // Add default "unknown"
-        m.value("readable_date", "") + "','" +
-        m.value("cpu_usage", "") + "','" +
-        m.value("memory_usage", "") + "','" +
-        m.value("disk_usage", "") + "','" +
-        m.value("usb_state", "") + "'," +
-        std::to_string(m.value("gpio_state", 0)) + ",'" +
-        m.value("kernel_version", "") + "','" +
-        m.value("hardware_model", "") + "','" +
-        m.value("firmware_version", "") + "')";
+        device_id + "','" +
+        readable_date + "'," +
+        std::to_string(cpu_usage) + "," +
+        std::to_string(memory_usage) + "," +
+        std::to_string(disk_usage) + ",'" +
+        usb_state + "','" +
+        gpio_state + "','" +
+        kernel_version + "','" +
+        hardware_model + "','" +
+        firmware_version + "')";
+        
     std::cout << "Executing hardware query: " << query << std::endl;
     return executeQuery(query);
 }
@@ -169,6 +213,7 @@ bool MySQLMetricsStorage::insertSoftwareInfo(const nlohmann::json& m) {
             apps += app.value("name", "") + ":" + app.value("version", "");
         }
     }
+    
     std::string services;
     if (m.contains("services")) {
         for (auto& [k, v] : m["services"].items()) {
@@ -176,16 +221,28 @@ bool MySQLMetricsStorage::insertSoftwareInfo(const nlohmann::json& m) {
             services += k + ":" + v.get<std::string>();
         }
     }
+    
+    // Escape all string values
+    std::string device_id = escapeSqlString(m.value("device_id", "unknown"));
+    std::string readable_date = escapeSqlString(m.value("readable_date", ""));
+    std::string ip_address = escapeSqlString(m.value("ip_address", ""));
+    std::string uptime = escapeSqlString(m.value("uptime", ""));
+    std::string network_status = escapeSqlString(m.value("network_status", ""));
+    std::string os_version = escapeSqlString(m.value("os_version", ""));
+    apps = escapeSqlString(apps);
+    services = escapeSqlString(services);
+    
     std::string query =
         "INSERT INTO software_info (device_id, readable_date, ip_address, uptime, network_status, os_version, applications, services) VALUES ('" +
-        m.value("device_id", "unknown") + "','" +  // Add default "unknown"
-        m.value("readable_date", "") + "','" +
-        m.value("ip_address", "") + "','" +
-        m.value("uptime", "") + "','" +
-        m.value("network_status", "") + "','" +
-        m.value("os_version", "") + "','" +
+        device_id + "','" +
+        readable_date + "','" +
+        ip_address + "','" +
+        uptime + "','" +
+        network_status + "','" +
+        os_version + "','" +
         apps + "','" +
         services + "')";
+        
     std::cout << "Executing software query: " << query << std::endl;
     return executeQuery(query);
 }

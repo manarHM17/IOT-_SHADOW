@@ -1,0 +1,16 @@
+{
+  "device_id": "2",
+  "readable_date": "2025-06-21_12-59-01",
+  "ip_address": "172.23.220.19",
+  "uptime": "up 8 hours, 47 minutes",
+  "os_version": "Ubuntu 24.04.2 LTS",
+  "network_status": "reachable",
+  "application_binaries": {
+    "print_hello": "004"
+  },
+  "services": {
+    "mosquitto": "inactive",
+    "cron": "active",
+    "ssh": "active"
+  }
+}
