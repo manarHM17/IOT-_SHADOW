@@ -1,9 +1,9 @@
 {
   "device_id": "4",
-  "readable_date": "2025-06-23_12-11-01",
-  "cpu_usage": "81.8%",
-  "memory_usage": "65.48%",
-  "disk_usage": "4%",
+  "readable_date": "2025-06-23_22-50-01",
+  "cpu_usage": "0%",
+  "memory_usage": "59.52%",
+  "disk_usage": "5%",
   "usb_state": "Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub | Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub",
   "gpio_state": 0,
   "kernel_version": "5.15.167.4-microsoft-standard-WSL2",

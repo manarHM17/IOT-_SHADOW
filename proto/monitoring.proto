@@ -6,8 +6,6 @@ service MonitoringService {
   // Client registers with server and receives a stream of alerts
   rpc RegisterDevice(DeviceInfo) returns (stream Alert) {}
   
-  // Client can send status update
-  rpc SendStatusUpdate(StatusUpdate) returns (StatusResponse) {}
 }
 
 // Initial device registration information
@@ -15,17 +13,7 @@ message DeviceInfo {
   string device_id = 1;     
 }
 
-// Status update if client needs to report directly via gRPC
-message StatusUpdate {
-  string device_id = 1;
-  string message = 2;
-}
 
-// Response for status updates
-message StatusResponse {
-  bool success = 1;
-  string message = 2;
-}
 
 // Alert message sent from server to client
 message Alert {

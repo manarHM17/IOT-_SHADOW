@@ -31,7 +31,7 @@ public:
     };
     
     // Constructor
-    MetricsAnalyzer(AlertManager* alert_manager, const std::string& thresholds_path);
+    MetricsAnalyzer(AlertManager* alert_manager);
     
     // Process hardware metrics from a device
     void processHardwareMetrics(const std::string& device_id, const nlohmann::json& metrics);

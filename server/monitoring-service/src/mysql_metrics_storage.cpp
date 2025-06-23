@@ -42,7 +42,6 @@ bool MySQLMetricsStorage::reconnect() {
 
     return initDatabase();
 }
-
 bool MySQLMetricsStorage::initDatabase() {
     if (!conn_) return false;
 
@@ -66,11 +65,11 @@ bool MySQLMetricsStorage::initDatabase() {
         "id INT AUTO_INCREMENT PRIMARY KEY,"
         "device_id VARCHAR(128),"
         "readable_date VARCHAR(32),"
-        "cpu_usage DECIMAL(5,2),"  // Changed to DECIMAL for numeric values
-        "memory_usage DECIMAL(5,2),"  // Changed to DECIMAL for numeric values
-        "disk_usage DECIMAL(5,2),"  // Changed to DECIMAL for numeric values
+        "cpu_usage DECIMAL(5,2),"  
+        "memory_usage DECIMAL(5,2),"  
+        "disk_usage DECIMAL(5,2),"  
         "usb_state TEXT,"
-        "gpio_state VARCHAR(32),"  // Changed to VARCHAR to handle string values
+        "gpio_state INT,"  // Changed from VARCHAR(32) to INT
         "kernel_version VARCHAR(64),"
         "hardware_model VARCHAR(128),"
         "firmware_version VARCHAR(128),"
@@ -82,6 +81,7 @@ bool MySQLMetricsStorage::initDatabase() {
         return false;
     }
 
+    // Rest of the function (software table creation) remains unchanged
     const char* create_sw_table =
         "CREATE TABLE IF NOT EXISTS software_info ("
         "id INT AUTO_INCREMENT PRIMARY KEY,"
@@ -102,7 +102,6 @@ bool MySQLMetricsStorage::initDatabase() {
     }
     return true;
 }
-
 bool MySQLMetricsStorage::executeQuery(const std::string& query) {
     std::lock_guard<std::mutex> lock(mysql_mutex_);
     
@@ -145,40 +144,48 @@ bool MySQLMetricsStorage::insertHardwareInfo(const nlohmann::json& m) {
         return false;
     }
 
-    // Log the full JSON for debugging
-    
-    // Handle different data types properly
+    // Handle string fields
     std::string device_id = escapeSqlString(m.value("device_id", "unknown"));
     std::string readable_date = escapeSqlString(m.value("readable_date", ""));
     std::string usb_state = escapeSqlString(m.value("usb_state", ""));
-    std::string gpio_state = escapeSqlString(m.value("gpio_state", ""));
     std::string kernel_version = escapeSqlString(m.value("kernel_version", ""));
     std::string hardware_model = escapeSqlString(m.value("hardware_model", ""));
     std::string firmware_version = escapeSqlString(m.value("firmware_version", ""));
-    
-    // Handle numeric values - convert to string for SQL
+
+    // Handle numeric fields
     double cpu_usage = 0.0;
     double memory_usage = 0.0;
     double disk_usage = 0.0;
-    
-    if (m.contains("cpu_usage")) {
-        if (m["cpu_usage"].is_number()) {
-            cpu_usage = m["cpu_usage"].get<double>();
+    int gpio_state = 0;  // Now an integer
+
+    // Extract numeric values
+    if (m.contains("cpu_usage") && m["cpu_usage"].is_number()) {
+        cpu_usage = m["cpu_usage"].get<double>();
+    }
+    if (m.contains("memory_usage") && m["memory_usage"].is_number()) {
+        memory_usage = m["memory_usage"].get<double>();
+    }
+    if (m.contains("disk_usage") && m["disk_usage"].is_number()) {
+        disk_usage = m["disk_usage"].get<double>();
+    }
+
+    // Handle gpio_state as an integer
+    if (m.contains("gpio_state")) {
+        if (m["gpio_state"].is_number_integer()) {
+            gpio_state = m["gpio_state"].get<int>();  // Direct integer from JSON
+        } else if (m["gpio_state"].is_string()) {
+            try {
+                gpio_state = std::stoi(m["gpio_state"].get<std::string>());  // Convert string to int
+            } catch (const std::exception& e) {
+                std::cerr << "Error converting gpio_state to int: " << e.what() << std::endl;
+                gpio_state = 0;  // Default value on failure
+            }
+        } else {
+            std::cerr << "gpio_state is neither a number nor a convertible string" << std::endl;
         }
     }
-    
-    if (m.contains("memory_usage")) {
-        if (m["memory_usage"].is_number()) {
-            memory_usage = m["memory_usage"].get<double>();
-        }
-    }
-    
-    if (m.contains("disk_usage")) {
-        if (m["disk_usage"].is_number()) {
-            disk_usage = m["disk_usage"].get<double>();
-        }
-    }
-    
+
+    // Construct the SQL query
     std::string query =
         "INSERT INTO hardware_info (device_id, readable_date, cpu_usage, memory_usage, disk_usage, usb_state, gpio_state, kernel_version, hardware_model, firmware_version) VALUES ('" +
         device_id + "','" +
@@ -186,12 +193,12 @@ bool MySQLMetricsStorage::insertHardwareInfo(const nlohmann::json& m) {
         std::to_string(cpu_usage) + "," +
         std::to_string(memory_usage) + "," +
         std::to_string(disk_usage) + ",'" +
-        usb_state + "','" +
-        gpio_state + "','" +
-        kernel_version + "','" +
+        usb_state + "'," +
+        std::to_string(gpio_state) + "," +  // Insert as number, no quotes
+        "'" + kernel_version + "','" +
         hardware_model + "','" +
         firmware_version + "')";
-        
+
     return executeQuery(query);
 }
 

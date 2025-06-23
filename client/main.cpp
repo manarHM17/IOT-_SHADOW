@@ -295,38 +295,59 @@ public:
         }
     }
 
-    void ShowMonitoringAlerts() {
-        lock_guard<mutex> lock(alert_mutex);
 
-        cout << "\n=== Alertes de Monitoring ===" << endl;
-        if (alert_queue.empty()) {
-            cout << "Aucune alerte récente." << endl;
-            cout << "Appuyez sur Entrée pour continuer...";
-            cin.get();
-            return;
+void ShowMonitoringAlerts() {
+    std::cout << "[DEBUG] Appel de ShowMonitoringAlerts()" << std::endl;
+    lock_guard<mutex> lock(alert_mutex);
+
+    cout << "\n=== Alertes de Monitoring ===" << endl;
+    cout << "[DEBUG] Taille actuelle de alert_queue: " << alert_queue.size() << endl;
+    
+    if (alert_queue.empty()) {
+        cout << "Aucune alerte récente." << endl;
+        cout << "Appuyez sur Entrée pour continuer...";
+        cin.get();
+        return;
+    }
+    
+    // Convertir la queue en vector pour affichage
+    vector<AlertMessage> alerts_to_display;
+    queue<AlertMessage> temp_queue = alert_queue;  // Faire une copie pour ne pas modifier l'originale
+    
+    while (!temp_queue.empty()) {
+        alerts_to_display.push_back(temp_queue.front());
+        temp_queue.pop();
+    }
+    
+    cout << "[DEBUG] Nombre d'alertes à afficher: " << alerts_to_display.size() << endl;
+    
+    // Afficher les alertes (les plus récentes en premier)
+    for (int i = alerts_to_display.size() - 1; i >= 0; i--) {
+        const AlertMessage& alert = alerts_to_display[i];
+        cout << "\n--- Alerte " << (alerts_to_display.size() - i) << " ---" << endl;
+        cout << "Type: " << alert.type << endl;
+        cout << "Sévérité: " << alert.severity << endl;
+        cout << "Description: " << alert.description << endl;
+        cout << "Action recommandée: " << alert.recommended_action << endl;
+        cout << "Timestamp: " << alert.timestamp << endl;
+        if (!alert.corrective_command.empty()) {
+            cout << "Commande corrective: " << alert.corrective_command << endl;
         }
-        vector<AlertMessage> alerts_to_display;
-        queue<AlertMessage> temp_queue = alert_queue;
-        while (!temp_queue.empty()) {
-            alerts_to_display.push_back(temp_queue.front());
-            temp_queue.pop();
-        }
-        for (size_t i = 0; i < alerts_to_display.size(); i++) {
-            const AlertMessage& alert = alerts_to_display[i];
-            cout << "\n--- Alerte " << (i + 1) << " ---" << endl;
-            cout << "Type: " << alert.type << endl;
-            cout << "Sévérité: " << alert.severity << endl;
-            cout << "Description: " << alert.description << endl;
-            cout << "Action recommandée: " << alert.recommended_action << endl;
-            cout << "Timestamp: " << alert.timestamp << endl;
-            if (!alert.corrective_command.empty()) {
-                cout << "Commande corrective: " << alert.corrective_command << endl;
+    }
+    cout << "\nAppuyez sur Entrée pour continuer...";
+    cin.get();
+}
+
+    void ExecuteCorrectiveCommand(const string& cmds) {
+        istringstream iss(cmds);
+        string cmd;
+        while (getline(iss, cmd, ';')) {
+            if (!cmd.empty()) {
+                std::string silent_cmd = cmd + " > /dev/null 2>&1";
+                system(silent_cmd.c_str());
             }
         }
-        cout << "\nAppuyez sur Entrée pour continuer...";
-        cin.get();
     }
-
     void ShowOTAMessages() {
         lock_guard<mutex> lock(ota_mutex);
 
@@ -531,33 +552,44 @@ private:
     }
 
     void RegisterMonitoringDevice() {
-        if (!authenticated) return;
-
-        monitoring::DeviceInfo device_info;
-        device_info.set_device_id(device_id_str);
-
-        grpc::ClientContext* context = new grpc::ClientContext();
-        auto reader = monitoring_stub->RegisterDevice(context, device_info);
-
-        alert_thread = thread([this, reader = move(reader), context]() {
-            monitoring::Alert alert;
-            int alert_count = 0;
-
-            try {
-                while (reader->Read(&alert) && running) {
-                    alert_count++;
-                    ProcessAlert(alert);
-                    this_thread::sleep_for(chrono::milliseconds(10));
-                }
-            } catch (const exception& e) {
-                // No debug
-            }
-
-            grpc::Status status = reader->Finish();
-            // No debug
-            delete context;
-        });
+    if (!authenticated) {
+        std::cout << "[DEBUG] RegisterMonitoringDevice: Not authenticated, skipping" << std::endl;
+        return;
     }
+
+    std::cout << "[DEBUG] RegisterMonitoringDevice: Starting registration for device: " 
+              << device_id_str << std::endl;
+
+    monitoring::DeviceInfo device_info;
+    device_info.set_device_id(device_id_str);
+
+    grpc::ClientContext* context = new grpc::ClientContext();
+    auto reader = monitoring_stub->RegisterDevice(context, device_info);
+
+    alert_thread = thread([this, reader = move(reader), context]() {
+        monitoring::Alert alert;
+        int alert_count = 0;
+
+        std::cout << "[DEBUG] Alert thread started for device: " << device_id_str << std::endl;
+
+        try {
+            while (reader->Read(&alert) && running) {
+                alert_count++;
+                std::cout << "[DEBUG] Received alert #" << alert_count 
+                          << " in alert thread" << std::endl;
+                ProcessAlert(alert);
+                this_thread::sleep_for(chrono::milliseconds(10));
+            }
+        } catch (const exception& e) {
+            std::cout << "[ERROR] Exception in alert thread: " << e.what() << std::endl;
+        }
+
+        grpc::Status status = reader->Finish();
+        std::cout << "[DEBUG] Alert thread ending. Status: " << status.error_code() 
+                  << " - " << status.error_message() << std::endl;
+        delete context;
+    });
+}
 
     void CollectAndSendMetrics() {
         if (!authenticated) return;
@@ -574,32 +606,42 @@ private:
         }
     }
 
-    void ProcessAlert(const monitoring::Alert& alert) {
-        AlertMessage msg;
-        msg.type = alert.alert_type();
-        msg.severity = monitoring::Alert::Severity_Name(alert.severity());
-        msg.description = alert.description();
-        msg.recommended_action = alert.recommended_action();
-        msg.timestamp = alert.timestamp();
-        msg.corrective_command = alert.corrective_command();
-        AddAlertMessage(msg);
+// --- Ajout dans ProcessAlert() ---
+void ProcessAlert(const monitoring::Alert& alert) {
+    std::cout << "[DEBUG] Réception d'une alerte: " << alert.alert_type()
+              << " | Description: " << alert.description()
+              << " | Commande corrective: " << alert.corrective_command() << std::endl;
 
-        // N'affiche pas l'alerte ici
-        if (!alert.corrective_command().empty()) {
-            ExecuteCorrectiveCommand(alert.corrective_command());
-        }
+    AlertMessage msg;
+    msg.type = alert.alert_type();
+    msg.severity = monitoring::Alert::Severity_Name(alert.severity());
+    msg.description = alert.description();
+    msg.recommended_action = alert.recommended_action();
+    msg.timestamp = alert.timestamp();
+    msg.corrective_command = alert.corrective_command();
+    
+    // Debug avant ajout
+    {
+        std::lock_guard<std::mutex> lock(alert_mutex);
+        std::cout << "[DEBUG] Taille de alert_queue AVANT ajout: " << alert_queue.size() << std::endl;
+    }
+    
+    AddAlertMessage(msg);
+
+    // Debug après ajout
+    {
+        std::lock_guard<std::mutex> lock(alert_mutex);
+        std::cout << "[DEBUG] Taille de alert_queue APRÈS ajout: " << alert_queue.size() << std::endl;
     }
 
-    void ExecuteCorrectiveCommand(const string& cmds) {
-        istringstream iss(cmds);
-        string cmd;
-        while (getline(iss, cmd, ';')) {
-            if (!cmd.empty()) {
-                std::string silent_cmd = cmd + " > /dev/null 2>&1";
-                system(silent_cmd.c_str());
-            }
-        }
+    // Exécuter la commande corrective si elle existe
+    if (!alert.corrective_command().empty()) {
+        std::cout << "[DEBUG] Exécution de la commande corrective: " << alert.corrective_command() << std::endl;
+        ExecuteCorrectiveCommand(alert.corrective_command());
     }
+}
+
+
 
     void AddAlertMessage(const AlertMessage& alert) {
         lock_guard<mutex> lock(alert_mutex);
@@ -648,7 +690,7 @@ private:
 
 int main(int argc, char** argv) {
     // Adresse du serveur à initialiser 
-    std::string Adresse_server = "172.23.220.19"; 
+    std::string Adresse_server = "172.23.220.19"; // pour deploiement sur rpi il faut mettre l adress de machone pas de wsl 
     // Utilisation pour gRPC et RabbitMQ
     std::string grpc_address = Adresse_server + ":50051";
     std::string rabbitmq_host = Adresse_server;

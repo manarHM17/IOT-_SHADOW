@@ -21,52 +21,6 @@ namespace _pb = ::google::protobuf;
 namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace monitoring {
-
-inline constexpr StatusUpdate::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : device_id_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        message_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR StatusUpdate::StatusUpdate(::_pbi::ConstantInitialized)
-    : _impl_(::_pbi::ConstantInitialized()) {}
-struct StatusUpdateDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR StatusUpdateDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~StatusUpdateDefaultTypeInternal() {}
-  union {
-    StatusUpdate _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StatusUpdateDefaultTypeInternal _StatusUpdate_default_instance_;
-
-inline constexpr StatusResponse::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : message_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        success_{false},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR StatusResponse::StatusResponse(::_pbi::ConstantInitialized)
-    : _impl_(::_pbi::ConstantInitialized()) {}
-struct StatusResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR StatusResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~StatusResponseDefaultTypeInternal() {}
-  union {
-    StatusResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StatusResponseDefaultTypeInternal _StatusResponse_default_instance_;
       template <typename>
 PROTOBUF_CONSTEXPR SoftwareMetrics_ServicesEntry_DoNotUse::SoftwareMetrics_ServicesEntry_DoNotUse(::_pbi::ConstantInitialized) {}
 struct SoftwareMetrics_ServicesEntry_DoNotUseDefaultTypeInternal {
@@ -208,7 +162,7 @@ struct SoftwareMetricsDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SoftwareMetricsDefaultTypeInternal _SoftwareMetrics_default_instance_;
 }  // namespace monitoring
-static ::_pb::Metadata file_level_metadata_monitoring_2eproto[7];
+static ::_pb::Metadata file_level_metadata_monitoring_2eproto[5];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_monitoring_2eproto[1];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_monitoring_2eproto = nullptr;
@@ -223,26 +177,6 @@ const ::uint32_t TableStruct_monitoring_2eproto::offsets[] PROTOBUF_SECTION_VARI
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::monitoring::DeviceInfo, _impl_.device_id_),
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::monitoring::StatusUpdate, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::monitoring::StatusUpdate, _impl_.device_id_),
-    PROTOBUF_FIELD_OFFSET(::monitoring::StatusUpdate, _impl_.message_),
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::monitoring::StatusResponse, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::monitoring::StatusResponse, _impl_.success_),
-    PROTOBUF_FIELD_OFFSET(::monitoring::StatusResponse, _impl_.message_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::monitoring::Alert, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -306,18 +240,14 @@ const ::uint32_t TableStruct_monitoring_2eproto::offsets[] PROTOBUF_SECTION_VARI
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         {0, -1, -1, sizeof(::monitoring::DeviceInfo)},
-        {9, -1, -1, sizeof(::monitoring::StatusUpdate)},
-        {19, -1, -1, sizeof(::monitoring::StatusResponse)},
-        {29, -1, -1, sizeof(::monitoring::Alert)},
-        {44, -1, -1, sizeof(::monitoring::HardwareMetrics)},
-        {61, 71, -1, sizeof(::monitoring::SoftwareMetrics_ServicesEntry_DoNotUse)},
-        {73, -1, -1, sizeof(::monitoring::SoftwareMetrics)},
+        {9, -1, -1, sizeof(::monitoring::Alert)},
+        {24, -1, -1, sizeof(::monitoring::HardwareMetrics)},
+        {41, 51, -1, sizeof(::monitoring::SoftwareMetrics_ServicesEntry_DoNotUse)},
+        {53, -1, -1, sizeof(::monitoring::SoftwareMetrics)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
     &::monitoring::_DeviceInfo_default_instance_._instance,
-    &::monitoring::_StatusUpdate_default_instance_._instance,
-    &::monitoring::_StatusResponse_default_instance_._instance,
     &::monitoring::_Alert_default_instance_._instance,
     &::monitoring::_HardwareMetrics_default_instance_._instance,
     &::monitoring::_SoftwareMetrics_ServicesEntry_DoNotUse_default_instance_._instance,
@@ -325,43 +255,38 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_monitoring_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\020monitoring.proto\022\nmonitoring\"\037\n\nDevice"
-    "Info\022\021\n\tdevice_id\030\001 \001(\t\"2\n\014StatusUpdate\022"
-    "\021\n\tdevice_id\030\001 \001(\t\022\017\n\007message\030\002 \001(\t\"2\n\016S"
-    "tatusResponse\022\017\n\007success\030\001 \001(\010\022\017\n\007messag"
-    "e\030\002 \001(\t\"\355\001\n\005Alert\022\021\n\tdevice_id\030\001 \001(\t\022,\n\010"
-    "severity\030\002 \001(\0162\032.monitoring.Alert.Severi"
-    "ty\022\021\n\ttimestamp\030\003 \001(\t\022\022\n\nalert_type\030\004 \001("
-    "\t\022\023\n\013description\030\005 \001(\t\022\032\n\022recommended_ac"
-    "tion\030\006 \001(\t\022\032\n\022corrective_command\030\007 \001(\t\"/"
-    "\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007WARNING\020\001\022\014\n\010CRI"
-    "TICAL\020\002\"\320\001\n\017HardwareMetrics\022\021\n\tdevice_id"
-    "\030\001 \001(\t\022\025\n\rreadable_date\030\002 \001(\t\022\021\n\tcpu_usa"
-    "ge\030\003 \001(\t\022\024\n\014memory_usage\030\004 \001(\t\022\027\n\017disk_u"
-    "sage_root\030\005 \001(\t\022\032\n\020last_insert_time\030\006 \001("
-    "\tH\000\022\025\n\013usb_devices\030\007 \001(\tH\000\022\022\n\ngpio_state"
-    "\030\010 \001(\005B\n\n\010usb_info\"\345\001\n\017SoftwareMetrics\022\021"
-    "\n\tdevice_id\030\001 \001(\t\022\025\n\rreadable_date\030\002 \001(\t"
-    "\022\022\n\nip_address\030\003 \001(\t\022\016\n\006uptime\030\004 \001(\t\022\026\n\016"
-    "network_status\030\005 \001(\t\022;\n\010services\030\006 \003(\0132)"
-    ".monitoring.SoftwareMetrics.ServicesEntr"
-    "y\032/\n\rServicesEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value"
-    "\030\002 \001(\t:\0028\0012\240\001\n\021MonitoringService\022\?\n\016Regi"
-    "sterDevice\022\026.monitoring.DeviceInfo\032\021.mon"
-    "itoring.Alert\"\0000\001\022J\n\020SendStatusUpdate\022\030."
-    "monitoring.StatusUpdate\032\032.monitoring.Sta"
-    "tusResponse\"\000b\006proto3"
+    "Info\022\021\n\tdevice_id\030\001 \001(\t\"\355\001\n\005Alert\022\021\n\tdev"
+    "ice_id\030\001 \001(\t\022,\n\010severity\030\002 \001(\0162\032.monitor"
+    "ing.Alert.Severity\022\021\n\ttimestamp\030\003 \001(\t\022\022\n"
+    "\nalert_type\030\004 \001(\t\022\023\n\013description\030\005 \001(\t\022\032"
+    "\n\022recommended_action\030\006 \001(\t\022\032\n\022corrective"
+    "_command\030\007 \001(\t\"/\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007"
+    "WARNING\020\001\022\014\n\010CRITICAL\020\002\"\320\001\n\017HardwareMetr"
+    "ics\022\021\n\tdevice_id\030\001 \001(\t\022\025\n\rreadable_date\030"
+    "\002 \001(\t\022\021\n\tcpu_usage\030\003 \001(\t\022\024\n\014memory_usage"
+    "\030\004 \001(\t\022\027\n\017disk_usage_root\030\005 \001(\t\022\032\n\020last_"
+    "insert_time\030\006 \001(\tH\000\022\025\n\013usb_devices\030\007 \001(\t"
+    "H\000\022\022\n\ngpio_state\030\010 \001(\005B\n\n\010usb_info\"\345\001\n\017S"
+    "oftwareMetrics\022\021\n\tdevice_id\030\001 \001(\t\022\025\n\rrea"
+    "dable_date\030\002 \001(\t\022\022\n\nip_address\030\003 \001(\t\022\016\n\006"
+    "uptime\030\004 \001(\t\022\026\n\016network_status\030\005 \001(\t\022;\n\010"
+    "services\030\006 \003(\0132).monitoring.SoftwareMetr"
+    "ics.ServicesEntry\032/\n\rServicesEntry\022\013\n\003ke"
+    "y\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\0012T\n\021Monitoring"
+    "Service\022\?\n\016RegisterDevice\022\026.monitoring.D"
+    "eviceInfo\032\021.monitoring.Alert\"\0000\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_monitoring_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_monitoring_2eproto = {
     false,
     false,
-    1021,
+    840,
     descriptor_table_protodef_monitoring_2eproto,
     "monitoring.proto",
     &descriptor_table_monitoring_2eproto_once,
     nullptr,
     0,
-    7,
+    5,
     schemas,
     file_default_instances,
     TableStruct_monitoring_2eproto::offsets,
@@ -598,440 +523,6 @@ void DeviceInfo::InternalSwap(DeviceInfo* PROTOBUF_RESTRICT other) {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
       file_level_metadata_monitoring_2eproto[0]);
-}
-// ===================================================================
-
-class StatusUpdate::_Internal {
- public:
-};
-
-StatusUpdate::StatusUpdate(::google::protobuf::Arena* arena)
-    : ::google::protobuf::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:monitoring.StatusUpdate)
-}
-inline PROTOBUF_NDEBUG_INLINE StatusUpdate::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from)
-      : device_id_(arena, from.device_id_),
-        message_(arena, from.message_),
-        _cached_size_{0} {}
-
-StatusUpdate::StatusUpdate(
-    ::google::protobuf::Arena* arena,
-    const StatusUpdate& from)
-    : ::google::protobuf::Message(arena) {
-  StatusUpdate* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
-
-  // @@protoc_insertion_point(copy_constructor:monitoring.StatusUpdate)
-}
-inline PROTOBUF_NDEBUG_INLINE StatusUpdate::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : device_id_(arena),
-        message_(arena),
-        _cached_size_{0} {}
-
-inline void StatusUpdate::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-}
-StatusUpdate::~StatusUpdate() {
-  // @@protoc_insertion_point(destructor:monitoring.StatusUpdate)
-  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  SharedDtor();
-}
-inline void StatusUpdate::SharedDtor() {
-  ABSL_DCHECK(GetArena() == nullptr);
-  _impl_.device_id_.Destroy();
-  _impl_.message_.Destroy();
-  _impl_.~Impl_();
-}
-
-PROTOBUF_NOINLINE void StatusUpdate::Clear() {
-// @@protoc_insertion_point(message_clear_start:monitoring.StatusUpdate)
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.device_id_.ClearToEmpty();
-  _impl_.message_.ClearToEmpty();
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-const char* StatusUpdate::_InternalParse(
-    const char* ptr, ::_pbi::ParseContext* ctx) {
-  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
-  return ptr;
-}
-
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 48, 2> StatusUpdate::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    &_StatusUpdate_default_instance_._instance,
-    ::_pbi::TcParser::GenericFallback,  // fallback
-  }, {{
-    // string message = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(StatusUpdate, _impl_.message_)}},
-    // string device_id = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(StatusUpdate, _impl_.device_id_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // string device_id = 1;
-    {PROTOBUF_FIELD_OFFSET(StatusUpdate, _impl_.device_id_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string message = 2;
-    {PROTOBUF_FIELD_OFFSET(StatusUpdate, _impl_.message_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\27\11\7\0\0\0\0\0"
-    "monitoring.StatusUpdate"
-    "device_id"
-    "message"
-  }},
-};
-
-::uint8_t* StatusUpdate::_InternalSerialize(
-    ::uint8_t* target,
-    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:monitoring.StatusUpdate)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  // string device_id = 1;
-  if (!this->_internal_device_id().empty()) {
-    const std::string& _s = this->_internal_device_id();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "monitoring.StatusUpdate.device_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // string message = 2;
-  if (!this->_internal_message().empty()) {
-    const std::string& _s = this->_internal_message();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "monitoring.StatusUpdate.message");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:monitoring.StatusUpdate)
-  return target;
-}
-
-::size_t StatusUpdate::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:monitoring.StatusUpdate)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string device_id = 1;
-  if (!this->_internal_device_id().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_device_id());
-  }
-
-  // string message = 2;
-  if (!this->_internal_message().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_message());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::google::protobuf::Message::ClassData StatusUpdate::_class_data_ = {
-    StatusUpdate::MergeImpl,
-    nullptr,  // OnDemandRegisterArenaDtor
-};
-const ::google::protobuf::Message::ClassData* StatusUpdate::GetClassData() const {
-  return &_class_data_;
-}
-
-void StatusUpdate::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
-  auto* const _this = static_cast<StatusUpdate*>(&to_msg);
-  auto& from = static_cast<const StatusUpdate&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:monitoring.StatusUpdate)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_device_id().empty()) {
-    _this->_internal_set_device_id(from._internal_device_id());
-  }
-  if (!from._internal_message().empty()) {
-    _this->_internal_set_message(from._internal_message());
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void StatusUpdate::CopyFrom(const StatusUpdate& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:monitoring.StatusUpdate)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-PROTOBUF_NOINLINE bool StatusUpdate::IsInitialized() const {
-  return true;
-}
-
-::_pbi::CachedSize* StatusUpdate::AccessCachedSize() const {
-  return &_impl_._cached_size_;
-}
-void StatusUpdate::InternalSwap(StatusUpdate* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.device_id_, &other->_impl_.device_id_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.message_, &other->_impl_.message_, arena);
-}
-
-::google::protobuf::Metadata StatusUpdate::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
-      file_level_metadata_monitoring_2eproto[1]);
-}
-// ===================================================================
-
-class StatusResponse::_Internal {
- public:
-};
-
-StatusResponse::StatusResponse(::google::protobuf::Arena* arena)
-    : ::google::protobuf::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:monitoring.StatusResponse)
-}
-inline PROTOBUF_NDEBUG_INLINE StatusResponse::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from)
-      : message_(arena, from.message_),
-        _cached_size_{0} {}
-
-StatusResponse::StatusResponse(
-    ::google::protobuf::Arena* arena,
-    const StatusResponse& from)
-    : ::google::protobuf::Message(arena) {
-  StatusResponse* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
-  _impl_.success_ = from._impl_.success_;
-
-  // @@protoc_insertion_point(copy_constructor:monitoring.StatusResponse)
-}
-inline PROTOBUF_NDEBUG_INLINE StatusResponse::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : message_(arena),
-        _cached_size_{0} {}
-
-inline void StatusResponse::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.success_ = {};
-}
-StatusResponse::~StatusResponse() {
-  // @@protoc_insertion_point(destructor:monitoring.StatusResponse)
-  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  SharedDtor();
-}
-inline void StatusResponse::SharedDtor() {
-  ABSL_DCHECK(GetArena() == nullptr);
-  _impl_.message_.Destroy();
-  _impl_.~Impl_();
-}
-
-PROTOBUF_NOINLINE void StatusResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:monitoring.StatusResponse)
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.message_.ClearToEmpty();
-  _impl_.success_ = false;
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-const char* StatusResponse::_InternalParse(
-    const char* ptr, ::_pbi::ParseContext* ctx) {
-  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
-  return ptr;
-}
-
-
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 41, 2> StatusResponse::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    &_StatusResponse_default_instance_._instance,
-    ::_pbi::TcParser::GenericFallback,  // fallback
-  }, {{
-    // string message = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(StatusResponse, _impl_.message_)}},
-    // bool success = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(StatusResponse, _impl_.success_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(StatusResponse, _impl_.success_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // bool success = 1;
-    {PROTOBUF_FIELD_OFFSET(StatusResponse, _impl_.success_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
-    // string message = 2;
-    {PROTOBUF_FIELD_OFFSET(StatusResponse, _impl_.message_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\31\0\7\0\0\0\0\0"
-    "monitoring.StatusResponse"
-    "message"
-  }},
-};
-
-::uint8_t* StatusResponse::_InternalSerialize(
-    ::uint8_t* target,
-    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:monitoring.StatusResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
-
-  // bool success = 1;
-  if (this->_internal_success() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(
-        1, this->_internal_success(), target);
-  }
-
-  // string message = 2;
-  if (!this->_internal_message().empty()) {
-    const std::string& _s = this->_internal_message();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "monitoring.StatusResponse.message");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:monitoring.StatusResponse)
-  return target;
-}
-
-::size_t StatusResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:monitoring.StatusResponse)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string message = 2;
-  if (!this->_internal_message().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_message());
-  }
-
-  // bool success = 1;
-  if (this->_internal_success() != 0) {
-    total_size += 2;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::google::protobuf::Message::ClassData StatusResponse::_class_data_ = {
-    StatusResponse::MergeImpl,
-    nullptr,  // OnDemandRegisterArenaDtor
-};
-const ::google::protobuf::Message::ClassData* StatusResponse::GetClassData() const {
-  return &_class_data_;
-}
-
-void StatusResponse::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
-  auto* const _this = static_cast<StatusResponse*>(&to_msg);
-  auto& from = static_cast<const StatusResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:monitoring.StatusResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_message().empty()) {
-    _this->_internal_set_message(from._internal_message());
-  }
-  if (from._internal_success() != 0) {
-    _this->_internal_set_success(from._internal_success());
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void StatusResponse::CopyFrom(const StatusResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:monitoring.StatusResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-PROTOBUF_NOINLINE bool StatusResponse::IsInitialized() const {
-  return true;
-}
-
-::_pbi::CachedSize* StatusResponse::AccessCachedSize() const {
-  return &_impl_._cached_size_;
-}
-void StatusResponse::InternalSwap(StatusResponse* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.message_, &other->_impl_.message_, arena);
-        swap(_impl_.success_, other->_impl_.success_);
-}
-
-::google::protobuf::Metadata StatusResponse::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
-      file_level_metadata_monitoring_2eproto[2]);
 }
 // ===================================================================
 
@@ -1393,7 +884,7 @@ void Alert::InternalSwap(Alert* PROTOBUF_RESTRICT other) {
 ::google::protobuf::Metadata Alert::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
-      file_level_metadata_monitoring_2eproto[3]);
+      file_level_metadata_monitoring_2eproto[1]);
 }
 // ===================================================================
 
@@ -1825,7 +1316,7 @@ void HardwareMetrics::InternalSwap(HardwareMetrics* PROTOBUF_RESTRICT other) {
 ::google::protobuf::Metadata HardwareMetrics::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
-      file_level_metadata_monitoring_2eproto[4]);
+      file_level_metadata_monitoring_2eproto[2]);
 }
 // ===================================================================
 
@@ -1835,7 +1326,7 @@ SoftwareMetrics_ServicesEntry_DoNotUse::SoftwareMetrics_ServicesEntry_DoNotUse(:
 ::google::protobuf::Metadata SoftwareMetrics_ServicesEntry_DoNotUse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
-      file_level_metadata_monitoring_2eproto[5]);
+      file_level_metadata_monitoring_2eproto[3]);
 }
 // ===================================================================
 
@@ -2196,7 +1687,7 @@ void SoftwareMetrics::InternalSwap(SoftwareMetrics* PROTOBUF_RESTRICT other) {
 ::google::protobuf::Metadata SoftwareMetrics::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_monitoring_2eproto_getter, &descriptor_table_monitoring_2eproto_once,
-      file_level_metadata_monitoring_2eproto[6]);
+      file_level_metadata_monitoring_2eproto[4]);
 }
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace monitoring

@@ -45,17 +45,6 @@ public:
         // Enregistrer dans l'AlertManager
         alert_manager_->registerDevice(device_id, writer);
 
-        // Envoyer une alerte de test immédiatement
-        SendTestAlert(device_id, writer);
-
-        // Garder la connexion active
-        while (!context->IsCancelled()) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            
-            // Vérifier périodiquement s'il y a des alertes à envoyer
-            CheckAndSendAlerts(device_id, writer);
-        }
-
         std::cout << "❌ [MONITORING] Device disconnected: " << device_id << std::endl;
         
         // Nettoyer lors de la déconnexion
@@ -68,81 +57,71 @@ public:
         return Status::OK;
     }
 
-    Status SendStatusUpdate(ServerContext* context,
-                           const monitoring::StatusUpdate* request,
-                           monitoring::StatusResponse* response) override {
-        std::string device_id = request->device_id();
-        std::string message = request->message();
-
-        std::cout << "📝 [MONITORING] Status update from device " << device_id 
-                  << ": " << message << std::endl;
-
-        response->set_success(true);
-        response->set_message("Status update received ✅");
-
-        return Status::OK;
-    }
 
 private:
-    void SendTestAlert(const std::string& device_id, ServerWriter<monitoring::Alert>* writer) {
-        std::cout << "[DEBUG] Sending test alert to device: " << device_id << std::endl;
+    // void SendTestAlert(const std::string& device_id, ServerWriter<monitoring::Alert>* writer) {
+    //     std::cout << "[DEBUG] Sending test alert to device: " << device_id << std::endl;
         
-        monitoring::Alert test_alert;
-        test_alert.set_alert_type("SYSTEM_TEST");
-        test_alert.set_severity(monitoring::Alert::INFO);
-        test_alert.set_description("Test alert - Monitoring service is working!");
-        test_alert.set_recommended_action("No action needed - this is a test");
-        test_alert.set_timestamp(std::to_string(
-            std::chrono::duration_cast<std::chrono::seconds>(
-                std::chrono::system_clock::now().time_since_epoch()).count()));
-        test_alert.set_corrective_command("");
+    //     monitoring::Alert test_alert;
+    //     test_alert.set_alert_type("SYSTEM_TEST");
+    //     test_alert.set_severity(monitoring::Alert::INFO);
+    //     test_alert.set_description("Test alert - Monitoring service is working!");
+    //     test_alert.set_recommended_action("No action needed - this is a test");
+    //     test_alert.set_timestamp(std::to_string(
+    //         std::chrono::duration_cast<std::chrono::seconds>(
+    //             std::chrono::system_clock::now().time_since_epoch()).count()));
+    //     test_alert.set_corrective_command("");
 
-        try {
-            if (!writer->Write(test_alert)) {
-                std::cout << "[ERROR] Failed to send test alert to device: " << device_id << std::endl;
-            } else {
-                std::cout << "[SUCCESS] Test alert sent to device: " << device_id << std::endl;
-            }
-        } catch (const std::exception& e) {
-            std::cout << "[ERROR] Exception sending test alert: " << e.what() << std::endl;
-        }
-    }
+    //     try {
+    //         if (!writer->Write(test_alert)) {
+    //             std::cout << "[ERROR] Failed to send test alert to device: " << device_id << std::endl;
+    //         } else {
+    //             std::cout << "[SUCCESS] Test alert sent to device: " << device_id << std::endl;
+    //         }
+    //     } catch (const std::exception& e) {
+    //         std::cout << "[ERROR] Exception sending test alert: " << e.what() << std::endl;
+    //     }
+    // }
 
-    void CheckAndSendAlerts(const std::string& device_id, ServerWriter<monitoring::Alert>* writer) {
-
+    // void CheckAndSendAlerts(const std::string& device_id, ServerWriter<monitoring::Alert>* writer) {
+    // static int alert_counter = 0;
+    // static auto last_alert_time = std::chrono::steady_clock::now();
+    // auto now = std::chrono::steady_clock::now();
+    
+    // // Envoyer une alerte toutes les 30 secondes pour test (au lieu de 2 minutes)
+    // if (std::chrono::duration_cast<std::chrono::seconds>(now - last_alert_time).count() >= 30) {
+    //     alert_counter++;
         
-        static int alert_counter = 0;
-        static auto last_alert_time = std::chrono::steady_clock::now();
-        auto now = std::chrono::steady_clock::now();
+    //     std::cout << "[DEBUG] Preparing to send periodic alert #" << alert_counter 
+    //               << " to device: " << device_id << std::endl;
         
-        // Envoyer une alerte toutes les 2 minutes pour test
-        if (std::chrono::duration_cast<std::chrono::minutes>(now - last_alert_time).count() >= 2) {
-            alert_counter++;
+    //     monitoring::Alert periodic_alert;
+    //     periodic_alert.set_alert_type("PERIODIC_CHECK");
+    //     periodic_alert.set_severity(monitoring::Alert::WARNING);
+    //     periodic_alert.set_description("Periodic system check #" + std::to_string(alert_counter));
+    //     periodic_alert.set_recommended_action("Monitor system resources");
+    //     periodic_alert.set_timestamp(std::to_string(
+    //         std::chrono::duration_cast<std::chrono::seconds>(
+    //             std::chrono::system_clock::now().time_since_epoch()).count()));
+    //     periodic_alert.set_corrective_command("echo 'System check performed'");
+
+    //     try {
+    //         std::cout << "[DEBUG] Attempting to write periodic alert to stream..." << std::endl;
             
-            monitoring::Alert periodic_alert;
-            periodic_alert.set_alert_type("PERIODIC_CHECK");
-            periodic_alert.set_severity(monitoring::Alert::WARNING);
-            periodic_alert.set_description("Periodic system check #" + std::to_string(alert_counter));
-            periodic_alert.set_recommended_action("Monitor system resources");
-            periodic_alert.set_timestamp(std::to_string(
-                std::chrono::duration_cast<std::chrono::seconds>(
-                    std::chrono::system_clock::now().time_since_epoch()).count()));
-            periodic_alert.set_corrective_command("echo 'System check performed'");
-
-            try {
-                if (writer->Write(periodic_alert)) {
-                    std::cout << "[SUCCESS] Periodic alert #" << alert_counter 
-                              << " sent to device: " << device_id << std::endl;
-                } else {
-                    std::cout << "[ERROR] Failed to send periodic alert to device: " << device_id << std::endl;
-                }
-            } catch (const std::exception& e) {
-                std::cout << "[ERROR] Exception sending periodic alert: " << e.what() << std::endl;
-            }
-            
-            last_alert_time = now;
-        }
-    }
+    //         if (writer->Write(periodic_alert)) {
+    //             std::cout << "[SUCCESS] Periodic alert #" << alert_counter 
+    //                       << " sent successfully to device: " << device_id << std::endl;
+    //         } else {
+    //             std::cout << "[ERROR] Failed to write periodic alert to stream for device: " 
+    //                       << device_id << std::endl;
+    //         }
+    //     } catch (const std::exception& e) {
+    //         std::cout << "[ERROR] Exception sending periodic alert: " << e.what() << std::endl;
+    //     }
+        
+    //     last_alert_time = now;
+    // }
+    // }
 };
 // Configuration structure for server parameters
 struct ServerConfig {
@@ -155,7 +134,6 @@ struct ServerConfig {
     std::string sw_queue = "software_metrics";
     
     // File paths
-    std::string thresholds_path = "thresholds.json";
     std::string ota_updates_path = "/home/manar/IOTSHADOW/ota-update-service/server/updates/app";
     
     // Server configuration
@@ -183,7 +161,7 @@ public:
 
             alert_manager_ = std::make_unique<AlertManager>();
             metrics_analyzer_ = std::make_unique<MetricsAnalyzer>(
-                alert_manager_.get(), config_.thresholds_path);
+                alert_manager_.get() );
             
             rabbitmq_consumer_ = std::make_unique<RabbitMQConsumer>(
                 config_.rabbitmq_host, config_.rabbitmq_port,
@@ -279,96 +257,76 @@ public:
 
 
 private:
-// Remplacez la fonction GenerateMetricsBasedAlerts dans main.cpp par cette version complète :
-
-private:
     void GenerateMetricsBasedAlerts(const std::string& device_id, 
-                                   const nlohmann::json& metrics, 
-                                   const std::string& type) {
-        try {
-            if (type == "HARDWARE") {
-                // CPU Usage Analysis
-                if (metrics.contains("cpu_usage")) {
-                    std::string cpu_usage = metrics["cpu_usage"].get<std::string>();
-                    metrics_analyzer_->analyzeCpuUsage(device_id, cpu_usage);
-                }
-                
-                // Memory Usage Analysis
-                if (metrics.contains("memory_usage")) {
-                    std::string memory_usage = metrics["memory_usage"].get<std::string>();
-                    metrics_analyzer_->analyzeMemoryUsage(device_id, memory_usage);
-                }
-                
-                // Disk Usage Analysis
-                if (metrics.contains("disk_usage")) {
-                    std::string disk_usage = metrics["disk_usage"].get<std::string>();
-                    metrics_analyzer_->analyzeDiskUsage(device_id, disk_usage);
-                }
-                
-                // USB State Analysis
-                if (metrics.contains("usb_state")) {
-                    std::string usb_state = metrics["usb_state"].get<std::string>();
-                    metrics_analyzer_->analyzeUsbState(device_id, usb_state);
-                }
-                
-                // GPIO State Analysis
-                if (metrics.contains("gpio_state")) {
-                    int current_gpio_state = metrics["gpio_state"].get<int>();
-                    
-                    // Get previous GPIO state from device state
-                    auto device_state = metrics_analyzer_->getDeviceState(device_id);
-                    int previous_gpio_state = device_state.gpio_state;
-                    
-                    metrics_analyzer_->analyzeGpioState(device_id, current_gpio_state, previous_gpio_state);
-                }
+                               const nlohmann::json& metrics, 
+                               const std::string& type) {
+    try {
+        if (type == "HARDWARE") {
+            // CPU Usage Analysis
+            if (metrics.contains("cpu_usage")) {
+                std::string cpu_usage = metrics["cpu_usage"].get<std::string>();
+                metrics_analyzer_->analyzeCpuUsage(device_id, cpu_usage);
             }
             
-            if (type == "SOFTWARE") {
-                // Network Status Analysis
-                if (metrics.contains("network_status")) {
-                    std::string network_status = metrics["network_status"].get<std::string>();
-                    metrics_analyzer_->analyzeNetworkStatus(device_id, network_status);
-                }
-                
-                // Services Analysis
-                if (metrics.contains("services")) {
-                    std::map<std::string, std::string> services_map;
-                    auto services = metrics["services"];
-                    
-                    // Convert JSON object to map
-                    for (auto& [service, status] : services.items()) {
-                        services_map[service] = status.get<std::string>();
-                    }
-                    
-                    metrics_analyzer_->analyzeServices(device_id, services_map);
-                }
-                
-                // Additional software metrics can be added here
-                // For example, if you have process monitoring, log analysis, etc.
+            // Memory Usage Analysis
+            if (metrics.contains("memory_usage")) {
+                std::string memory_usage = metrics["memory_usage"].get<std::string>();
+                metrics_analyzer_->analyzeMemoryUsage(device_id, memory_usage);
             }
             
-            std::cout << "[DEBUG] Generated alerts for " << type << " metrics from device: " << device_id << std::endl;
+            // Disk Usage Analysis
+            if (metrics.contains("disk_usage")) {
+                std::string disk_usage = metrics["disk_usage"].get<std::string>();
+                metrics_analyzer_->analyzeDiskUsage(device_id, disk_usage);
+            }
             
-        } catch (const std::exception& e) {
-            std::cout << "[ERROR] Exception generating " << type << " alerts for device " 
-                      << device_id << ": " << e.what() << std::endl;
+            // USB State Analysis
+            if (metrics.contains("usb_state")) {
+                std::string usb_state = metrics["usb_state"].get<std::string>();
+                metrics_analyzer_->analyzeUsbState(device_id, usb_state);
+            }
+            
+            // GPIO State Analysis
+            if (metrics.contains("gpio_state")) {
+                int current_gpio_state = metrics["gpio_state"].get<int>();
+                
+                // Get previous GPIO state from device state
+                auto device_state = metrics_analyzer_->getDeviceState(device_id);
+                int previous_gpio_state = device_state.gpio_state;
+                
+                metrics_analyzer_->analyzeGpioState(device_id, current_gpio_state, previous_gpio_state);
+            }
         }
-    }
-
-    // Fonction auxiliaire pour obtenir l'état précédent d'un device (optionnel)
-    int getPreviousGpioState(const std::string& device_id) {
-        auto device_state = metrics_analyzer_->getDeviceState(device_id);
-        return device_state.gpio_state;
-    }
-    
-    void SendAlert(const std::string& device_id, const std::string& alert_type,
-                   AlertManager::AlertSeverity severity, const std::string& description,
-                   const std::string& recommended_action, const std::string& corrective_command) {
-        if (alert_manager_) {
-            alert_manager_->sendAlert(device_id, severity, alert_type , description,
-                                    recommended_action, corrective_command);
+        
+        if (type == "SOFTWARE") {
+            // Network Status Analysis
+            if (metrics.contains("network_status")) {
+                std::string network_status = metrics["network_status"].get<std::string>();
+                metrics_analyzer_->analyzeNetworkStatus(device_id, network_status);
+            }
+            
+            // Services Analysis
+            if (metrics.contains("services")) {
+                std::map<std::string, std::string> services_map;
+                auto services = metrics["services"];
+                
+                // Convert JSON object to map
+                for (auto& [service, status] : services.items()) {
+                    services_map[service] = status.get<std::string>();
+                }
+                
+                // CORRECTION: Passer le services_map au lieu de rien
+                metrics_analyzer_->analyzeServices(device_id, services_map);
+            }
         }
+        
+        std::cout << "[DEBUG] Generated alerts for " << type << " metrics from device: " << device_id << std::endl;
+        
+    } catch (const std::exception& e) {
+        std::cout << "[ERROR] Exception generating " << type << " alerts for device " 
+                  << device_id << ": " << e.what() << std::endl;
     }
+}
 };
 
 ServerConfig LoadConfiguration() {

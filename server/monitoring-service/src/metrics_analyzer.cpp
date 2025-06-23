@@ -6,14 +6,9 @@
 #include <cmath>
 
 
-MetricsAnalyzer::MetricsAnalyzer(AlertManager* alert_manager, const std::string& thresholds_path)
+MetricsAnalyzer::MetricsAnalyzer(AlertManager* alert_manager)
     : alert_manager_(alert_manager) {
-    // Initialize with default values
-    thresholds_ = {
-        {"cpu", {{"warning", 75.0}, {"critical", 90.0}}},
-        {"memory", {{"warning", 80.0}, {"critical", 95.0}}},
-        {"disk", {{"warning", 85.0}, {"critical", 95.0}}}
-    };
+    
 }
 
 void MetricsAnalyzer::processHardwareMetrics(const std::string& device_id, const nlohmann::json& metrics) {
@@ -287,7 +282,7 @@ void MetricsAnalyzer::analyzeGpioState(const std::string& device_id, int current
 
 
 void MetricsAnalyzer::analyzeServices(const std::string& device_id, const std::map<std::string, std::string>& services) {
-    std::vector<std::string> essential_services = {"mqtt", "ssh"}; // Define essential services
+    std::vector<std::string> essential_services = {"mossquito", "ssh"}; // Define essential services
     
     for (const auto& service_name : essential_services) {
         auto it = services.find(service_name);

@@ -23,7 +23,6 @@ namespace monitoring {
 
 static const char* MonitoringService_method_names[] = {
   "/monitoring.MonitoringService/RegisterDevice",
-  "/monitoring.MonitoringService/SendStatusUpdate",
 };
 
 std::unique_ptr< MonitoringService::Stub> MonitoringService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -34,7 +33,6 @@ std::unique_ptr< MonitoringService::Stub> MonitoringService::NewStub(const std::
 
 MonitoringService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_RegisterDevice_(MonitoringService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_SendStatusUpdate_(MonitoringService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::ClientReader< ::monitoring::Alert>* MonitoringService::Stub::RegisterDeviceRaw(::grpc::ClientContext* context, const ::monitoring::DeviceInfo& request) {
@@ -53,29 +51,6 @@ void MonitoringService::Stub::async::RegisterDevice(::grpc::ClientContext* conte
   return ::grpc::internal::ClientAsyncReaderFactory< ::monitoring::Alert>::Create(channel_.get(), cq, rpcmethod_RegisterDevice_, context, request, false, nullptr);
 }
 
-::grpc::Status MonitoringService::Stub::SendStatusUpdate(::grpc::ClientContext* context, const ::monitoring::StatusUpdate& request, ::monitoring::StatusResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::monitoring::StatusUpdate, ::monitoring::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SendStatusUpdate_, context, request, response);
-}
-
-void MonitoringService::Stub::async::SendStatusUpdate(::grpc::ClientContext* context, const ::monitoring::StatusUpdate* request, ::monitoring::StatusResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::monitoring::StatusUpdate, ::monitoring::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendStatusUpdate_, context, request, response, std::move(f));
-}
-
-void MonitoringService::Stub::async::SendStatusUpdate(::grpc::ClientContext* context, const ::monitoring::StatusUpdate* request, ::monitoring::StatusResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendStatusUpdate_, context, request, response, reactor);
-}
-
-::grpc::ClientAsyncResponseReader< ::monitoring::StatusResponse>* MonitoringService::Stub::PrepareAsyncSendStatusUpdateRaw(::grpc::ClientContext* context, const ::monitoring::StatusUpdate& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::monitoring::StatusResponse, ::monitoring::StatusUpdate, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SendStatusUpdate_, context, request);
-}
-
-::grpc::ClientAsyncResponseReader< ::monitoring::StatusResponse>* MonitoringService::Stub::AsyncSendStatusUpdateRaw(::grpc::ClientContext* context, const ::monitoring::StatusUpdate& request, ::grpc::CompletionQueue* cq) {
-  auto* result =
-    this->PrepareAsyncSendStatusUpdateRaw(context, request, cq);
-  result->StartCall();
-  return result;
-}
-
 MonitoringService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       MonitoringService_method_names[0],
@@ -87,16 +62,6 @@ MonitoringService::Service::Service() {
              ::grpc::ServerWriter<::monitoring::Alert>* writer) {
                return service->RegisterDevice(ctx, req, writer);
              }, this)));
-  AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MonitoringService_method_names[1],
-      ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< MonitoringService::Service, ::monitoring::StatusUpdate, ::monitoring::StatusResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
-          [](MonitoringService::Service* service,
-             ::grpc::ServerContext* ctx,
-             const ::monitoring::StatusUpdate* req,
-             ::monitoring::StatusResponse* resp) {
-               return service->SendStatusUpdate(ctx, req, resp);
-             }, this)));
 }
 
 MonitoringService::Service::~Service() {
@@ -106,13 +71,6 @@ MonitoringService::Service::~Service() {
   (void) context;
   (void) request;
   (void) writer;
-  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-}
-
-::grpc::Status MonitoringService::Service::SendStatusUpdate(::grpc::ServerContext* context, const ::monitoring::StatusUpdate* request, ::monitoring::StatusResponse* response) {
-  (void) context;
-  (void) request;
-  (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
