@@ -16,7 +16,6 @@ MetricsCollector::MetricsCollector(const std::string& log_dir)
 }
 
 std::pair<std::string, std::string> MetricsCollector::collectMetrics() {
-    std::cout << "Searching for latest metrics files in: " << log_dir_ << std::endl;
 
     std::vector<fs::directory_entry> hw_files;
     std::vector<fs::directory_entry> sw_files;
@@ -54,7 +53,6 @@ std::pair<std::string, std::string> MetricsCollector::collectMetrics() {
     std::string hw_file_path = hw_files.size() > 1 ? hw_files[1].path().string() : hw_files[0].path().string();
     std::string sw_file_path = sw_files.size() > 1 ? sw_files[1].path().string() : sw_files[0].path().string();
 
-    std::cout << "Selected files: " << hw_file_path << " and " << sw_file_path << std::endl;
     return {hw_file_path, sw_file_path};
 }
 

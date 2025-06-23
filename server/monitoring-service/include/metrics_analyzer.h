@@ -38,22 +38,7 @@ public:
     
     // Process software metrics from a device
     void processSoftwareMetrics(const std::string& device_id, const nlohmann::json& metrics);
-    
-    // Get the current state of a device
-    DeviceState getDeviceState(const std::string& device_id);
-    
-    // Get all known device IDs
-    std::vector<std::string> getAllDeviceIds();
-
-private:
-    AlertManager* alert_manager_;
-    nlohmann::json thresholds_;
-    
-    // Device states
-    std::map<std::string, DeviceState> device_states_;
-    std::mutex devices_mutex_;
-    
-    // Analyze CPU usage
+        // Analyze CPU usage
     void analyzeCpuUsage(const std::string& device_id, const std::string& cpu_usage);
     
     // Analyze memory usage
@@ -73,6 +58,20 @@ private:
     
     // Analyze services
     void analyzeServices(const std::string& device_id, const std::map<std::string, std::string>& services);
+    
+    // Get the current state of a device
+    DeviceState getDeviceState(const std::string& device_id);
+    
+    // Get all known device IDs
+    std::vector<std::string> getAllDeviceIds();
+
+private:
+    AlertManager* alert_manager_;
+    nlohmann::json thresholds_;
+    
+    // Device states
+    std::map<std::string, DeviceState> device_states_;
+    std::mutex devices_mutex_;
     
     // Helper to extract percentage value from string
     float extractPercentage(const std::string& percentage_str);

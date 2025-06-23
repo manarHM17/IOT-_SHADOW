@@ -4,11 +4,21 @@ project(iotshadow_server)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Protobuf & gRPC
+
 set(protobuf_MODULE_COMPATIBLE TRUE)
+set(Protobuf_PROTOC_EXECUTABLE "/usr/bin/protoc")
 find_package(Protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+message(STATUS "Using protobuf ${protobuf_VERSION}")
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+
+# Find abseil (required by gRPC)
+find_package(absl CONFIG REQUIRED)
+message(STATUS "Using abseil ${absl_VERSION}")
+
+# Find gRPC
+find_package(gRPC CONFIG REQUIRED)
+set(gRPC_CPP_PLUGIN_EXECUTABLE "/usr/local/bin/grpc_cpp_plugin")
+message(STATUS "Using gRPC ${gRPC_VERSION}")
 set(_GRPC_GRPCPP gRPC::grpc++)
 set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
 

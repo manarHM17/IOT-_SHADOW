@@ -109,8 +109,7 @@ private:
     }
 
     void CheckAndSendAlerts(const std::string& device_id, ServerWriter<monitoring::Alert>* writer) {
-        // Cette méthode peut être utilisée pour envoyer des alertes périodiques
-        // ou des alertes basées sur les métriques reçues
+
         
         static int alert_counter = 0;
         static auto last_alert_time = std::chrono::steady_clock::now();
@@ -194,7 +193,6 @@ public:
             // Améliorer les callbacks pour traiter les métriques
             auto hw_callback = [this](const std::string& device_id, const nlohmann::json& metrics) {
                 std::cout << "[DEBUG] Processing HW metrics from device: " << device_id << std::endl;
-                std::cout << "[DEBUG] HW Metrics: " << metrics.dump(2) << std::endl;
                 
                 metrics_analyzer_->processHardwareMetrics(device_id, metrics);
                 
@@ -204,7 +202,6 @@ public:
 
             auto sw_callback = [this](const std::string& device_id, const nlohmann::json& metrics) {
                 std::cout << "[DEBUG] Processing SW metrics from device: " << device_id << std::endl;
-                std::cout << "[DEBUG] SW Metrics: " << metrics.dump(2) << std::endl;
                 
                 metrics_analyzer_->processSoftwareMetrics(device_id, metrics);
                 
@@ -282,49 +279,88 @@ public:
 
 
 private:
+// Remplacez la fonction GenerateMetricsBasedAlerts dans main.cpp par cette version complète :
+
+private:
     void GenerateMetricsBasedAlerts(const std::string& device_id, 
                                    const nlohmann::json& metrics, 
                                    const std::string& type) {
         try {
-            // Exemple d'alertes basées sur les métriques
             if (type == "HARDWARE") {
+                // CPU Usage Analysis
                 if (metrics.contains("cpu_usage")) {
-                    double cpu_usage = metrics["cpu_usage"];
-                    if (cpu_usage > 80.0) {
-                        SendAlert(device_id, "HIGH_CPU_USAGE", AlertManager::AlertSeverity::WARNING,
-                                 "CPU usage is high: " + std::to_string(cpu_usage) + "%",
-                                 "Consider stopping unnecessary processes",
-                                 "ps aux | sort -nrk 3,3 | head -5");
-                    }
+                    std::string cpu_usage = metrics["cpu_usage"].get<std::string>();
+                    metrics_analyzer_->analyzeCpuUsage(device_id, cpu_usage);
                 }
                 
+                // Memory Usage Analysis
                 if (metrics.contains("memory_usage")) {
-                    double memory_usage = metrics["memory_usage"];
-                    if (memory_usage > 85.0) {
-                        SendAlert(device_id, "HIGH_MEMORY_USAGE", AlertManager::AlertSeverity::CRITICAL,
-                                 "Memory usage is critical: " + std::to_string(memory_usage) + "%",
-                                 "Free up memory or restart services",
-                                 "free -h; sync; echo 3 > /proc/sys/vm/drop_caches");
-                    }
+                    std::string memory_usage = metrics["memory_usage"].get<std::string>();
+                    metrics_analyzer_->analyzeMemoryUsage(device_id, memory_usage);
+                }
+                
+                // Disk Usage Analysis
+                if (metrics.contains("disk_usage")) {
+                    std::string disk_usage = metrics["disk_usage"].get<std::string>();
+                    metrics_analyzer_->analyzeDiskUsage(device_id, disk_usage);
+                }
+                
+                // USB State Analysis
+                if (metrics.contains("usb_state")) {
+                    std::string usb_state = metrics["usb_state"].get<std::string>();
+                    metrics_analyzer_->analyzeUsbState(device_id, usb_state);
+                }
+                
+                // GPIO State Analysis
+                if (metrics.contains("gpio_state")) {
+                    int current_gpio_state = metrics["gpio_state"].get<int>();
+                    
+                    // Get previous GPIO state from device state
+                    auto device_state = metrics_analyzer_->getDeviceState(device_id);
+                    int previous_gpio_state = device_state.gpio_state;
+                    
+                    metrics_analyzer_->analyzeGpioState(device_id, current_gpio_state, previous_gpio_state);
                 }
             }
             
             if (type == "SOFTWARE") {
-                if (metrics.contains("disk_usage")) {
-                    double disk_usage = metrics["disk_usage"];
-                    if (disk_usage > 90.0) {
-                        SendAlert(device_id, "HIGH_DISK_USAGE", AlertManager::AlertSeverity::CRITICAL,
-                                 "Disk usage is critical: " + std::to_string(disk_usage) + "%",
-                                 "Clean up disk space immediately",
-                                 "df -h; find /tmp -type f -atime +7 -delete");
-                    }
+                // Network Status Analysis
+                if (metrics.contains("network_status")) {
+                    std::string network_status = metrics["network_status"].get<std::string>();
+                    metrics_analyzer_->analyzeNetworkStatus(device_id, network_status);
                 }
+                
+                // Services Analysis
+                if (metrics.contains("services")) {
+                    std::map<std::string, std::string> services_map;
+                    auto services = metrics["services"];
+                    
+                    // Convert JSON object to map
+                    for (auto& [service, status] : services.items()) {
+                        services_map[service] = status.get<std::string>();
+                    }
+                    
+                    metrics_analyzer_->analyzeServices(device_id, services_map);
+                }
+                
+                // Additional software metrics can be added here
+                // For example, if you have process monitoring, log analysis, etc.
             }
+            
+            std::cout << "[DEBUG] Generated alerts for " << type << " metrics from device: " << device_id << std::endl;
+            
         } catch (const std::exception& e) {
-            std::cout << "[ERROR] Exception generating alerts: " << e.what() << std::endl;
+            std::cout << "[ERROR] Exception generating " << type << " alerts for device " 
+                      << device_id << ": " << e.what() << std::endl;
         }
     }
 
+    // Fonction auxiliaire pour obtenir l'état précédent d'un device (optionnel)
+    int getPreviousGpioState(const std::string& device_id) {
+        auto device_state = metrics_analyzer_->getDeviceState(device_id);
+        return device_state.gpio_state;
+    }
+    
     void SendAlert(const std::string& device_id, const std::string& alert_type,
                    AlertManager::AlertSeverity severity, const std::string& description,
                    const std::string& recommended_action, const std::string& corrective_command) {

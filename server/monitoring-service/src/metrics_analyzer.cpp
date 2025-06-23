@@ -76,8 +76,6 @@ void MetricsAnalyzer::processHardwareMetrics(const std::string& device_id, const
             state.last_hw_update = ss.str();
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error processing hardware metrics for device " << device_id 
-                  << ": " << e.what() << std::endl;
     }
 }
 
@@ -128,8 +126,6 @@ void MetricsAnalyzer::processSoftwareMetrics(const std::string& device_id, const
             state.last_sw_update = ss.str();
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error processing software metrics for device " << device_id 
-                  << ": " << e.what() << std::endl;
     }
 }
 

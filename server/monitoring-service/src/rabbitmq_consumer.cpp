@@ -105,19 +105,12 @@ void RabbitMQConsumer::consumeHardwareMetrics() {
                 // Extract device ID
                 std::string device_id = json["device_id"];
 
-                std::cout << "[DEBUG] Hardware metrics received for device: " << device_id << std::endl;
-                std::cout << "[DEBUG] JSON: " << json.dump(2) << std::endl;
 
                 // Call callback
                 hw_callback_(device_id, json);
                 bool ok = mysql_storage.insertHardwareInfo(json);
-                if (!ok) {
-                    std::cerr << "[ERROR] Failed to insert hardware metrics into MySQL" << std::endl;
-                } else {
-                    std::cout << "[DEBUG] Hardware metrics inserted into MySQL" << std::endl;
-                }
+
             } catch (const std::exception& e) {
-                std::cerr << "Error processing hardware metrics: " << e.what() << std::endl;
             }
 
             // Acknowledge message
@@ -177,19 +170,13 @@ void RabbitMQConsumer::consumeSoftwareMetrics() {
                 // Extract device ID
                 std::string device_id = json["device_id"];
 
-                std::cout << "[DEBUG] Software metrics received for device: " << device_id << std::endl;
-                std::cout << "[DEBUG] JSON: " << json.dump(2) << std::endl;
+
 
                 // Call callback
                 sw_callback_(device_id, json);
                 bool ok = mysql_storage.insertSoftwareInfo(json);
-                if (!ok) {
-                    std::cerr << "[ERROR] Failed to insert software metrics into MySQL" << std::endl;
-                } else {
-                    std::cout << "[DEBUG] Software metrics inserted into MySQL" << std::endl;
-                }
+
             } catch (const std::exception& e) {
-                std::cerr << "Error processing software metrics: " << e.what() << std::endl;
             }
 
             // Acknowledge message
@@ -202,7 +189,6 @@ void RabbitMQConsumer::consumeSoftwareMetrics() {
             // Timeout, just continue
         } else {
             // Error
-            std::cerr << "Error consuming software metrics: " << res.reply_type << std::endl;
             break;
         }
     }

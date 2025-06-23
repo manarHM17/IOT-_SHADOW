@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Protobuf
+
 set(protobuf_MODULE_COMPATIBLE TRUE)
+set(Protobuf_PROTOC_EXECUTABLE "/usr/bin/protoc")
 find_package(Protobuf CONFIG REQUIRED)
 message(STATUS "Using protobuf ${protobuf_VERSION}")
 set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
@@ -17,6 +19,7 @@ message(STATUS "Using abseil ${absl_VERSION}")
 
 # Find gRPC
 find_package(gRPC CONFIG REQUIRED)
+set(gRPC_CPP_PLUGIN_EXECUTABLE "/usr/local/bin/grpc_cpp_plugin")
 message(STATUS "Using gRPC ${gRPC_VERSION}")
 set(_GRPC_GRPCPP gRPC::grpc++)
 set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
@@ -95,7 +98,6 @@ add_custom_command(
     DEPENDS ${OTA_PROTO}
 )
 
-
 # Create a target for proto generation
 add_custom_target(generate_protos
     DEPENDS
@@ -112,7 +114,6 @@ add_custom_target(generate_protos
         ${GENERATED_PROTO_PATH_OTA}/ota_service.grpc.pb.cc
         ${GENERATED_PROTO_PATH_OTA}/ota_service.grpc.pb.h
 )
-
 
 # List specific source files for each service to avoid multiple mains and duplicate implementations
 set(CLIENT_SOURCES
@@ -131,7 +132,6 @@ set(CLIENT_SOURCES
     ${GENERATED_PROTO_PATH_OTA}/ota_service.pb.cc
     ${GENERATED_PROTO_PATH_OTA}/ota_service.grpc.pb.cc
 )
-
 
 # Create the main client executable
 add_executable(iotshadow_client ${CLIENT_SOURCES})

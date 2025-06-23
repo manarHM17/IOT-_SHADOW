@@ -146,7 +146,6 @@ bool MySQLMetricsStorage::insertHardwareInfo(const nlohmann::json& m) {
     }
 
     // Log the full JSON for debugging
-    std::cout << "Inserting hardware metrics: " << m.dump(2) << std::endl;
     
     // Handle different data types properly
     std::string device_id = escapeSqlString(m.value("device_id", "unknown"));
@@ -193,7 +192,6 @@ bool MySQLMetricsStorage::insertHardwareInfo(const nlohmann::json& m) {
         hardware_model + "','" +
         firmware_version + "')";
         
-    std::cout << "Executing hardware query: " << query << std::endl;
     return executeQuery(query);
 }
 
@@ -204,7 +202,6 @@ bool MySQLMetricsStorage::insertSoftwareInfo(const nlohmann::json& m) {
     }
 
     // Log the full JSON for debugging
-    std::cout << "Inserting software metrics: " << m.dump(2) << std::endl;
     
     std::string apps;
     if (m.contains("applications")) {
@@ -243,6 +240,5 @@ bool MySQLMetricsStorage::insertSoftwareInfo(const nlohmann::json& m) {
         apps + "','" +
         services + "')";
         
-    std::cout << "Executing software query: " << query << std::endl;
     return executeQuery(query);
 }
